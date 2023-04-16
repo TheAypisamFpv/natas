@@ -1,4 +1,4 @@
-from email.mime import base
+from tqdm import tqdm
 import json
 import base64
 
@@ -12,34 +12,36 @@ default_cookie = {
 
 cookies = {"data": None}
 
-def xor_encrypt(inp:str):
-    key = 'hello world'
-    text = inp
+
+def xor_encrypt(in_str, key):
+    key = str(key)
     out_text = ''
 
     # Iterate through each character
-    for i in range(len(text)):
-        out_text += str(str(text[i]) ^ str(key[i % len(key)]))
+    for i in range(len(in_str)):
+        out_text += chr(in_str[i] ^ ord(key[i % len(key)]))
 
-    return out_text
-
-
-def xor_decrypt(inp):
-    key = '<censored>'
-    text = inp
-    out_text = b''
-
-    # Iterate through each character
-    for i in range(len(text)):
-        out_text += bytes([text[i] ^ key[i % len(key)]])
-
-    return out_text.decode('utf-8')
+    return bytes(out_text, 'utf-8')
 
 
-def save_data(data): 
-    return base64.b64encode(xor_encrypt(json.dumps(data).encode('utf-8'))).decode('utf-8')
+
+def save_data(data, key): 
+    return base64.b64encode(xor_encrypt(json.dumps(data).encode('utf-8'), key)).decode('utf-8')
 
 
-# cookies["data"] = save_data(default_cookie)
 
-print(json.dumps(default_cookie).encode('utf-8'))
+# print(json.dumps(default_cookie))
+
+
+def key_finder(encrypt_cookie):
+    # try every password from of length 1 to 100 characters long using utf-8 encoding
+    for i in range(1, 100):
+        raw_key = [''] * i
+    for j in range(32, 123):
+        print(chr(j).encode(encoding='UTF-8'), j)
+
+
+
+print(key_finder(encrypted_cookie))
+
+# print(save_data(default_cookie, 'test'))
